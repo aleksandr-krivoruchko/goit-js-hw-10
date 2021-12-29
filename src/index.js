@@ -1,48 +1,32 @@
 import './css/styles.css';
 import Notiflix from 'notiflix';
-import Lodash from "lodash";
-// import {fetchCountries} from './fetchCountries';
+import debounce from "lodash.debounce";
+import {fetchCountries} from './fetchCountries';
 
 const DEBOUNCE_DELAY = 300;
 const input = document.querySelector("#search-box");
 const countryList = document.querySelector(".country-list");
 const countryInfo = document.querySelector(".country-info");
 
-input.addEventListener("input", _.debounce(onInputFetch, DEBOUNCE_DELAY));
-// input.addEventListener("input", onInputFetch);
+input.addEventListener("input", debounce(onInputFetch, DEBOUNCE_DELAY, {
+      leading: true,
+      trailing: false,
+    }));
 
 
 function onInputFetch(e) {
-fetchCountries(e.currentTarget.value);
-renderCountryCard(e.currentTarget.value);
-}
-
-function fetchCountries(name) {
-	return fetch(`https://restcountries.com/v3.1/name/${name}?fields=name,capital,population,flags,languages`)
-  .then(response => {
-    return response.json();
-  })
-  .then(countries => {
-
-if(countries.length > 10){
-	countryList.innerHTML="";
-		  Notiflix.Notify.warning("Too many matches found. Please enter a more specific name");
-	  }else
-
-if(countries.length < 10 && countries.length > 2){
-    countryInfo.innerHTML="";
-    renderCountryList(countries);
-	  } else
-
-if(countries.length < 2){
-		  countryList.innerHTML="";
-	renderCountryCard(countries);
-}  })
-
+	if(e.currentTarget.value === ""){
+		countryList.innerHTML="";
+	countryInfo.innerHTML="";}
+fetchCountries(e.currentTarget.value)
+.then(countries => {
+	changeMarkup(countries)
+})
   .catch(error => {
-    console.log(error);
-  });
+    Notiflix.Notify.failure("Oops, there is no country with that name");
+  });;
 }
+
 
 
 function renderCountryList(countries) {
@@ -71,4 +55,21 @@ function renderCountryCard(countries) {
     .join("");
   countryInfo.innerHTML = markup;
   
+}
+
+function changeMarkup(countries) {
+	if(countries.length > 10){
+	countryList.innerHTML="";
+		  Notiflix.Notify.warning("Too many matches found. Please enter a more specific name");
+	  }else
+
+if(countries.length < 10 && countries.length > 2){
+    countryInfo.innerHTML="";
+    renderCountryList(countries);
+	  } else
+
+if(countries.length < 2){
+		  countryList.innerHTML="";
+	renderCountryCard(countries);
+}
 }
