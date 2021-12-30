@@ -15,16 +15,14 @@ input.addEventListener("input", debounce(onInputFetch, DEBOUNCE_DELAY, {
 
 
 function onInputFetch(e) {
-	if(e.currentTarget.value === ""){
-		countryList.innerHTML="";
-	countryInfo.innerHTML="";}
-fetchCountries(e.currentTarget.value)
-.then(countries => {
-	changeMarkup(countries)
-})
+  if (e.currentTarget.value.trim()) {
+    fetchCountries(e.currentTarget.value)
+.then(changeMarkup)
   .catch(error => {
     Notiflix.Notify.failure("Oops, there is no country with that name");
   });;
+  }
+
 }
 
 
@@ -46,7 +44,7 @@ function renderCountryCard(countries) {
 	const markup = countries
     .map((country) => {
       return `<img class="flag"src='${country.flags.svg}' alt="flag" />
-			 <span> ${country.name.official}</span>
+			 <span class="title"> ${country.name.official}</span>
           <p><b>Capital</b>: ${country.capital}</p>
           <p><b>Population</b>: ${country.population}</p>
 			 <p><b>Languages</b>: ${Object.values(country.languages)}</p>
@@ -72,4 +70,8 @@ if(countries.length < 2){
 		  countryList.innerHTML="";
 	renderCountryCard(countries);
 }
+}
+
+function clearMarkup() {
+  
 }
