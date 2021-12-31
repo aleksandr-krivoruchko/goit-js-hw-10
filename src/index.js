@@ -15,15 +15,20 @@ input.addEventListener("input", debounce(onInputFetch, DEBOUNCE_DELAY, {
 
 
 function onInputFetch(e) {
-  if (e.currentTarget.value.trim()) {
+  if (e.currentTarget.value === "") { 
+    
+    countryList.innerHTML = "";
+    countryInfo.innerHTML = "";
+   }
+
     fetchCountries(e.currentTarget.value)
-.then(changeMarkup)
+  .then(changeMarkup)
   .catch(error => {
     Notiflix.Notify.failure("Oops, there is no country with that name");
-  });;
+  });
   }
 
-}
+
 
 
 
@@ -58,7 +63,7 @@ function renderCountryCard(countries) {
 function changeMarkup(countries) {
 	if(countries.length > 10){
 	countryList.innerHTML="";
-		  Notiflix.Notify.warning("Too many matches found. Please enter a more specific name");
+		  Notiflix.Notify.info("Too many matches found. Please enter a more specific name");
 	  }else
 
 if(countries.length < 10 && countries.length > 2){
